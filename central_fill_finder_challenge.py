@@ -57,11 +57,38 @@ def generate_central_fills(count):
     # Return the completed list after all facilities are generated.
     return central_fills
 
-def main():
-    # Use fixed coordinates to verify the distance calculation. 
-    user_x = 4
-    user_y = 2
 
+def get_user_coordinates():
+    # Continue prompting until the user enters valid coordinates.
+    while True:
+        user_input = input("Please Input Coordinates (x,y): ")
+
+        try:
+            coordinates = user_input.split(",")
+
+            # Require exactly two coordinate values.
+            if len(coordinates) != 2:
+                print("Please input two coordinates separated by a comma.")
+                continue
+
+            x = int(coordinates[0].strip())
+            y = int(coordinates[1].strip())
+
+            # Coordinates must fall within the defined grid.
+            if not (-10 <= x <= 10 and -10 <= y <= 10):
+                print("Coordinates must be between -10 and +10.")
+                continue
+
+            return x, y
+
+        except ValueError:
+            print("Invalid input. Enter whole numbers, such as 4,2.")
+
+def main():
+
+    # Request user to enter coordinates and validate results.
+    user_x, user_y = get_user_coordinates()
+   
     # Generate random Central Fill facilities 10x 
     central_fills = generate_central_fills(30)
 
@@ -78,6 +105,7 @@ def main():
     central_fills.sort(key=lambda fill: (distance_from_user(fill), fill["id"]))
 
     # Display fill and its distance from the location 
+    print(f"\nClosest Central Fills to ({user_x},{user_y}):")
     for fill in central_fills[:3]:
 
         fill_distance = distance_from_user(fill)
@@ -90,14 +118,13 @@ def main():
         # Output for Fill ID, Location, Distance, and Medication (converted to dollars using 2f option for floating integer 2 places) 
         print(
             f"Central Fill {fill['id']} - "
-            f"Location ({fill['x']}, {fill['y']}), "
-            f"Distance {fill_distance}, "
-            f"Medication A: ${fill['medications']['A'] / 100:.2f}, "
-            f"Medication B: ${fill['medications']['B'] / 100:.2f}, "
-            f"Medication C: ${fill['medications']['C'] / 100:.2f}, "
-            f"Cheapest: Medication {cheapest_medication}, "
-            f"${cheapest_price / 100:.2f}"
+            f"${cheapest_price / 100:.2f}, "
+            f"Medication {cheapest_medication}, "
+            f"Distance {fill_distance} "     
+                     
         )
+
+
 
 if __name__ == "__main__":
     main()
