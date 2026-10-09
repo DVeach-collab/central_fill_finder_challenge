@@ -63,21 +63,27 @@ def main():
     user_y = 2
 
     # Generate random Central Fill facilities 10x 
-    central_fills = generate_central_fills(10)
+    central_fills = generate_central_fills(30)
 
-    # Display fill and its distance from the location 
-    for fill in central_fills:
-
-        fill_distance = manhattan_distance(
+    # Calculate each facility's distance from the customer for sorting.
+    def distance_from_user(fill):
+        return manhattan_distance(
             user_x,
             user_y,
             fill["x"],
             fill["y"]
         )
 
+    # Sort by shortest distance first, then by facility ID if distances tie.
+    central_fills.sort(key=lambda fill: (distance_from_user(fill), fill["id"]))
+
+    # Display fill and its distance from the location 
+    for fill in central_fills[:3]:
+
+        fill_distance = distance_from_user(fill)
+        
         # Identify the least expensive medication at this Central Fill.
         medications = fill["medications"]
-
         cheapest_medication = min(medications, key=medications.get)
         cheapest_price = medications[cheapest_medication]
 
